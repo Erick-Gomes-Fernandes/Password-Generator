@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 )
 
 func main() {
-	password := generatePassword(8)
+	password := generatePassword(12)
 	fmt.Println(password)
 }
 
@@ -18,15 +17,26 @@ func generatePassword(length int) string {
 	special := "!@#$%^&*()+?><:{}[]"
 	characters := lowerCase + upperCase + numbers + special
 
-	var sb strings.Builder
+	// Adiciona os 4 caracteres obrigatórios
+	chars := []byte{}
+	chars = append(chars, lowerCase[rand.Intn(len(lowerCase))])
+	chars = append(chars, upperCase[rand.Intn(len(upperCase))])
+	chars = append(chars, numbers[rand.Intn(len(numbers))])
+	chars = append(chars, special[rand.Intn(len(special))])
 
-	for i := 0; i < length; i++ {
-		index := rand.Intn(len(characters))
-		char := string(characters[index])
-		sb.WriteString(char)
+	//Adiciona o resto dos caracteres depois dos obrigatórios igual o tamanho inserido da senha
+	for len(chars) < length {
+		chars = append(chars, characters[rand.Intn(len(characters))])
 	}
 
-	return sb.String()
+	//Embaralha as posições dos caracteres
+	for i := len(chars) - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		chars[i], chars[j] = chars[j], chars[i]
+	}
+
+	//Retorna a senha convertendo o tipo byte em string
+	return string(chars)
 }
 
 // Priemiro momento -> gerar uma senha completamente aleatória
